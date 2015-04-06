@@ -13,7 +13,13 @@ import java.io.*;
  */
 public class Network {
     
-    public Socket connect(String hostName, int port) {
+    /**
+     *
+     * @param hostName
+     * @param port
+     * @return
+     */
+    public static Socket connect(String hostName, int port) {
         /* The connect method simply connects to the host server
         * and spits out a couple of error messages. should be able
         * to replace hard codded variables with options eventually.
