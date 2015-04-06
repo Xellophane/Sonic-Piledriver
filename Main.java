@@ -14,19 +14,15 @@ import java.io.*;
 public class Main {
     public static void main(String[] cl_args) {
         
-        while(!false) {
-            System.out.println("Ur face!");
-        }
-        
-        try {
+        /* try {
             Thread server = new GreetingServer();
             server.start();
         } catch (IOException e) {
             System.out.println("IOException :" + e);
-        }
+        } */
         
-        GreetingClient client = new GreetingClient();
-        client.connect();
-        client.send();
+        VoIPGUI client = new VoIPGUI();
+        // client.connect();
+        // client.send();
     }
 }

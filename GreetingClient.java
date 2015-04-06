@@ -17,7 +17,7 @@ public class GreetingClient {
     int port = 600;
    Socket client;
     
-    public void connect() {
+    public void connect(String hostName, int port, Socket client) {
         /* The connect method simply connects to the host server
         * and spits out a couple of error messages. should be able
         * to replace hard codded variables with options eventually.
