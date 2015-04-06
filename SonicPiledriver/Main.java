@@ -5,8 +5,6 @@
  */
 package SonicPiledriver;
 
-import java.io.*;
-
 /**
  *
  * @author Xellophane
