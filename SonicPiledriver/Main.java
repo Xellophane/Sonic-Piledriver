@@ -18,9 +18,8 @@ public class Main {
         } catch (IOException e) {
             System.out.println("IOException :" + e);
         } */
-        
-        VoIPGUI client = new VoIPGUI();
-        // client.connect();
-        // client.send();
+        // eventually want this*
+        LoginGUI lg = new LoginGUI();
+        //VoIPGUI client = new VoIPGUI();
     }
 }

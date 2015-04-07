@@ -36,7 +36,7 @@ public class LoginGUI {
         JPanel south = new JPanel(new FlowLayout());
         south.add(new JButton("Login"));
         south.add(new JButton("Register"));
-        south.add(new JButton("Cancel"));
+        south.add(new JButton("Clear"));
         login.add(south, BorderLayout.SOUTH);
         
         login.setVisible(true);
