@@ -19,14 +19,14 @@ public class Network {
      * @param port
      * @return
      */
-    public static Socket connect(Inetaddress, int port) {
+    public static Socket connect(InetAddress hostip, int port) {
         /* The connect method simply connects to the host server
         * and spits out a couple of error messages. should be able
         * to replace hard codded variables with options eventually.
         */
         try {
-        System.out.println("Connecting to  " + hostName + " on port " + port);
-        Socket client = new Socket(hostName, port);
+        System.out.println("Connecting to  " + hostip + " on port " + port);
+        Socket client = new Socket(hostip, port);
         System.out.println("Just connected to " + client.getRemoteSocketAddress());
         return client;
         } catch (UnknownHostException e) {
