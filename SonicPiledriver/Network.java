@@ -19,7 +19,7 @@ public class Network {
      * @param port
      * @return
      */
-    public static Socket connect(String hostName, int port) {
+    public static Socket connect(Inetaddress, int port) {
         /* The connect method simply connects to the host server
         * and spits out a couple of error messages. should be able
         * to replace hard codded variables with options eventually.
