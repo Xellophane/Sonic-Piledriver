@@ -9,7 +9,8 @@ package SonicPiledriver.SonicPiledriver;
  *
  * @author Cody
  */
-public class DataBase {
+public class Database {
+    
     
     
     
