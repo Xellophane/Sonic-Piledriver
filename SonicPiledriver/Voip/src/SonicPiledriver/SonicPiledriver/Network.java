@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package SonicPiledriver;
+package SonicPiledriver.SonicPiledriver;
 import java.net.*;
 import java.io.*;
 
@@ -11,7 +11,7 @@ import java.io.*;
  *
  * @author Xellophane
  */
-public class Network {
+public class Network extends Thread {
     
     /**
      *
@@ -39,4 +39,5 @@ public class Network {
         
         return null;
     }
+    
 }
