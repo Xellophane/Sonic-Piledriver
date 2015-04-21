@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package SonicPiledriver.SonicPiledriver;
+package SonicPiledriver;
 
 //import SonicPiledriver.DataBase;
 import java.awt.*;
@@ -57,7 +57,7 @@ public class LoginGUI {
         JButton registerbt = new JButton("Register");
         ActionListener registerListener = new ActionListener(){
                             public void actionPerformed(ActionEvent e){
-                                RegisterGUI.Visible = true;
+                                // RegisterGUI.Visible(true);
                             }
         };
         registerbt.addActionListener(registerListener);

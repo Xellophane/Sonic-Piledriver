@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package SonicPiledriver.SonicPiledriver;
+package SonicPiledriver;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -19,14 +19,14 @@ import java.util.HashMap;
  * @author Jeff
  * 
  */
-public class Database {
+public class DataBase {
 
     //Fields
     protected Connection connect;
     protected ArrayList<String> tables;
 
     //Constructor
-    public Database() throws Exception {
+    public DataBase() throws Exception {
         String dbPath = "./Credentials.db";
 
         Class.forName("org.sqlite.JDBC");
@@ -59,7 +59,7 @@ public class Database {
     //
     public String getIP (String username) throws SQLException{
         
-        String IP;
+        String IP = "";
         Statement stmt = connect.createStatement();
         
          ResultSet resSet = stmt.executeQuery("SELECT 'IP' FROM 'login' WHERE username='" + username + "';");
