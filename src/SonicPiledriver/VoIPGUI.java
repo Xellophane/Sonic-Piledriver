@@ -70,8 +70,8 @@ public class VoIPGUI extends JFrame{
                                         DataOutputStream out = 
                                                 new DataOutputStream(client.getOutputStream());
                                         DataInputStream in = new DataInputStream(host.server.getInputStream());
-                                        manager.captureAudio();
                                         while (connected) {
+                                            manager.captureAudio();
                                             byte[] outbuffer = manager.outBuffer.toByteArray();
                                             out.write(outbuffer);
                                             manager.playAudio(in);
@@ -80,6 +80,9 @@ public class VoIPGUI extends JFrame{
                                         System.out.println("Uknown Host Error " + f);
                                     } catch (IOException g) {
                                         System.out.println("IOException " + g);
+                                    } catch (NullPointerException n) {
+                                        System.out.println("NullPointerException " + n);
+                                        n.printStackTrace();
                                     }
                                 } 
         };
@@ -135,6 +138,7 @@ public class VoIPGUI extends JFrame{
             System.exit(-1);
         } catch (IOException e) {
             System.out.println("IOException : " + e);
+            e.printStackTrace();
             System.exit(-2);
         }
         
