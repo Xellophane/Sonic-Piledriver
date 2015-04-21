@@ -16,7 +16,8 @@ import java.util.HashMap;
 
 /**
  *
- * @author Cody
+ * @author Jeff
+ * 
  */
 public class Database {
 
@@ -88,11 +89,11 @@ public class Database {
     } //ends isValid
 
     //Kills the database connection to avoid memory leaks.
-    public void slayDB() throws SQLException {
+    public void killDB() throws SQLException {
         if (connect != null) {
             connect.close();
         }
 
-    } //End slayDB()
+    } //End killDB()
 
 }
