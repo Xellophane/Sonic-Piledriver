@@ -1,4 +1,4 @@
-package SonicPiledriver.SonicPiledriver;
+package SonicPiledriver;
 
 import javax.swing.*;
 import javax.sound.sampled.*;
