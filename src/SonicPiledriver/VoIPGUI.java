@@ -5,8 +5,7 @@
  */
 package SonicPiledriver;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.io.*;
 import java.net.*;
 import javax.swing.*;
@@ -28,6 +27,7 @@ public class VoIPGUI extends JFrame{
     Socket client;
     Server host;
     Sound manager;
+    boolean connected;
     
     
     
@@ -62,13 +62,28 @@ public class VoIPGUI extends JFrame{
         JPanel south = new JPanel(new FlowLayout());
         
         JButton callbt = new JButton("Call");
-        /*ActionListener callListener = new ActionListener(){
-                                public void actionPerformed(ActionEvent e){
-                                    Outgoing = Network.connect((InetAddress) field.getText(), port);
-                                    Sound.CaptureAudio
-                                }
+        ActionListener callListener = new ActionListener(){
+                                 public void actionPerformed(ActionEvent e){
+                                    try {
+                                        client = connect(InetAddress.getByName(field.getText()), 6969);
+                                        connected = true;
+                                        DataOutputStream out = 
+                                                new DataOutputStream(client.getOutputStream());
+                                        DataInputStream in = new DataInputStream(host.server.getInputStream());
+                                        manager.captureAudio();
+                                        while (connected) {
+                                            byte[] outbuffer = manager.outBuffer.toByteArray();
+                                            out.write(outbuffer);
+                                            manager.playAudio(in);
+                                        }
+                                    } catch (UnknownHostException f) {
+                                        System.out.println("Uknown Host Error " + f);
+                                    } catch (IOException g) {
+                                        System.out.println("IOException " + g);
+                                    }
+                                } 
         };
-        callbt.addActionListener(callListener);*/
+        callbt.addActionListener(callListener);
         
         JButton addfriend = new JButton("Add Friend");
         /*ActionListener addfriendListener = new ActionListener(){
@@ -102,6 +117,28 @@ public class VoIPGUI extends JFrame{
             frame.setVisible(false);
             System.out.println("Failed to verify login");
         } */
+    }
+    
+    
+    public Socket connect(InetAddress hostip, int port) {
+        /* The connect method simply connects to the host server
+        * and spits out a couple of error messages. should be able
+        * to replace hard codded variables with options eventually.
+        */
+        try {
+        System.out.println("Connecting to  " + hostip + " on port " + port);
+        Socket outbound = new Socket(hostip, port);
+        System.out.println("Just connected to " + outbound.getRemoteSocketAddress());
+        return outbound;
+        } catch (UnknownHostException e) {
+            System.out.print("Unknown host " + e);
+            System.exit(-1);
+        } catch (IOException e) {
+            System.out.println("IOException : " + e);
+            System.exit(-2);
+        }
+        
+        return null;
     }
     
     

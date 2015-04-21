@@ -17,13 +17,13 @@ import java.io.*;
 public class Server extends Thread {
     private ServerSocket Socket;
     private int port;
-    private boolean running = false;
+    public boolean running = true;
     Socket server;
     
     public Server(int port) {
+        this.port = port;
         try {
             Socket = new ServerSocket(port);
-            Socket.setSoTimeout(10000);
             
         } catch (IOException e) {
             System.out.println("IOException " + e);
@@ -48,6 +48,9 @@ public class Server extends Thread {
             } catch (IOException e) {
                 System.out.println("IOException " + e);
                 break;
+            } catch (NullPointerException p) {
+                System.out.println("NullPointerException " + p);
+                p.printStackTrace();
             }
         }
     }
@@ -57,4 +60,6 @@ public class Server extends Thread {
     public ServerSocket getSocket() {
         return Socket;
     }
+    
+    
 }

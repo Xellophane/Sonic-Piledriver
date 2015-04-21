@@ -5,13 +5,8 @@
  */
 package SonicPiledriver;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.DataLine;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.TargetDataLine;
+import java.io.*;
+import javax.sound.sampled.*;
 
 /**
  *
@@ -19,13 +14,14 @@ import javax.sound.sampled.TargetDataLine;
  */
 public class Sound {
     boolean running;
-    ByteArrayOutputStream out;
+    ByteArrayOutputStream outBuffer;
+    ByteArrayInputStream inBuffer;
     
     public void captureAudio() {
         try {
-            final AudioFormat format = getFormat();
+            AudioFormat format = getFormat();
             DataLine.Info info = new DataLine.Info(TargetDataLine.class, format);
-            final TargetDataLine line = (TargetDataLine)
+            TargetDataLine line = (TargetDataLine)
                     AudioSystem.getLine(info);
             line.open(format);
             line.start();
@@ -34,17 +30,17 @@ public class Sound {
                 byte buffer[] = new byte[bufferSize];
                 
                 public void run() {
-                    out = new ByteArrayOutputStream();
+                    outBuffer = new ByteArrayOutputStream();
                     running = true;
                     try {
                         while (running) {
                             int count =
                                     line.read(buffer, 0, buffer.length);
-                            if (count > 0) {
-                                out.write(buffer, 0, count);
+                            if (count >= 0) {
+                                outBuffer.write(buffer, 0, count);
                             }
                         }
-                        out.close();
+                        outBuffer.close();
                     } catch (IOException e) {
                         System.err.println("I/O problems: " + e);
                         System.exit(-1);
@@ -58,6 +54,53 @@ public class Sound {
             System.exit(-2);
         }
     }
+    
+    public void playAudio(DataInputStream in) {
+        try {
+            AudioFormat format = getFormat();
+            int audioSize = (int) format.getSampleRate()
+                    * format.getFrameSize();
+            byte audio[] = new byte[audioSize];
+            InputStream input =
+                    new ByteArrayInputStream(audio);
+            
+            AudioInputStream ais =
+                    new AudioInputStream(input, format, audio.length / format.getFrameSize());
+            DataLine.Info info = new DataLine.Info(SourceDataLine.class, format);
+            SourceDataLine line = (SourceDataLine)
+                AudioSystem.getLine(info);
+            line.open(format);
+            line.start();
+            
+            Runnable runner = new Runnable() {
+                int bufferSize = (int) format.getSampleRate()
+                        * format.getFrameSize();
+                byte buffer[] = new byte[bufferSize];
+                
+                public void run() {
+                    try {
+                        int count;
+                        while((count = ais.read(
+                        buffer, 0, buffer.length)) != -1) {
+                            if (count > 0) {
+                                line.write(buffer, 0, count);    
+                            }
+                        }
+                        line.drain();
+                        line.close();
+                        
+                    } catch (IOException e) {
+                        System.err.println("I/O problems: " + e);
+                    }
+                }
+            };
+            Thread playThread = new Thread(runner);
+            playThread.start();
+        } catch (LineUnavailableException e) {
+            System.err.println("Line unavailable: " + e);
+        }
+    }
+    
     
     private AudioFormat getFormat() {
         float sampleRate = 8000;
