@@ -43,6 +43,7 @@ public class Sound {
                         outBuffer.close();
                     } catch (IOException e) {
                         System.err.println("I/O problems: " + e);
+                        e.printStackTrace();
                         System.exit(-1);
                     }
                 }
