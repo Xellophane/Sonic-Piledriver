@@ -24,9 +24,11 @@ public class Server extends Thread {
         this.port = port;
         try {
             Socket = new ServerSocket(port);
+            System.out.println("Waiting for connection on port " + port);
             
         } catch (IOException e) {
             System.out.println("IOException " + e);
+            e.printStackTrace();
         }
         System.out.println("Server created");
         
@@ -35,18 +37,16 @@ public class Server extends Thread {
     public void run() {
         while (running) {
             try {
-                System.out.println("Waiting for connection on port " + port);
+                
                 server = Socket.accept();
                 System.out.println(server.getRemoteSocketAddress() + 
                         " has just connected");
-                DataInputStream in =
-                        new DataInputStream(server.getInputStream());
-                server.close();
             } catch(SocketTimeoutException s) {
                 System.out.println("Socket timed out");
                 break;
             } catch (IOException e) {
                 System.out.println("IOException " + e);
+                e.printStackTrace();
                 break;
             } catch (NullPointerException p) {
                 System.out.println("NullPointerException " + p);
