@@ -51,42 +51,42 @@ public class Database {
 
         }
     } //ends createUser
-
+    
     //creates entries in the friends list
-    public void addFriend(String username, String friend) {
-        try {
+    public void addFriend (String username, String friend){
+         try {
             Statement stmt = connect.createStatement();
-
-            stmt.executeUpdate("INSERT INTO 'friends' VALUES('" + username + "', '" + friend + "');");
-
+            
+            stmt.executeUpdate("INSERT INTO 'friends' VALUES('" + username + "', '" + friend +"');");
+            
             if (stmt != null) {
                 stmt.close();
             }
-        } catch (SQLException except) {
+        } catch (SQLException except){
             except.printStackTrace();
         }
     } //ends addFriend
-
+    
     //Updates entries in the database
-    public void updateUser(String username, String password, String IP) {
+    public void updateUser (String username, String password, String IP) {
         try {
             Statement stmt = connect.createStatement();
-
-            stmt.executeUpdate("UPDATE 'login' WHERE username='" + username + "' AND paasword='" + password + "';")
-            if (stmt != null)
+            
+            stmt.executeUpdate("UPDATE 'login' WHERE username='" +)
         }
     }
-
+    
+    
     //deletes a user from the database
-    public void delUser(String username) {
+    public void delUser (String username){
         try {
             Statement stmt = connect.createStatement();
 
             stmt.executeUpdate("DELETE * WHERE username='" + username + "';");
-            if (stmt != null) {
-                stmt.close();
-            }
-        } catch (SQLException except) {
+             if (stmt != null){
+                 stmt.close();
+             }
+        } catch (SQLException except){
             except.printStackTrace();
         }
     } //ends delUser
@@ -109,6 +109,8 @@ public class Database {
         return buddies;
     } //Ends getFriends
 
+    
+    
     // gets a user's IP address from the database
     public String getIP(String username) throws SQLException {
 
