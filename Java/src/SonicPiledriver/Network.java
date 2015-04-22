@@ -4,40 +4,77 @@
  * and open the template in the editor.
  */
 package SonicPiledriver;
+
 import java.net.*;
 import java.io.*;
+import javax.sound.sampled.LineUnavailableException;
 
 /**
  *
  * @author Xellophane
  */
 public class Network extends Thread {
-    
-    /**
-     *
-     * @param hostName
-     * @param port
-     * @return
-     */
-    public static Socket connect(InetAddress hostip, int port) {
-        /* The connect method simply connects to the host server
-        * and spits out a couple of error messages. should be able
-        * to replace hard codded variables with options eventually.
-        */
-        try {
-        System.out.println("Connecting to  " + hostip + " on port " + port);
-        Socket client = new Socket(hostip, port);
-        System.out.println("Just connected to " + client.getRemoteSocketAddress());
-        return client;
-        } catch (UnknownHostException e) {
-            System.out.print("Unknown host " + e);
-            System.exit(-1);
-        } catch (IOException e) {
-            System.out.println("IOException : " + e);
-            System.exit(-2);
-        }
-        
-        return null;
+
+    ServerSocket Host;
+    int port;
+    boolean running;
+    Socket Server;
+    Socket client;
+    Microphone mic;
+    Speaker speak;
+    InputStream in;
+    ObjectOutputStream out;
+    byte buffer[];
+
+    public Network(int port) throws IOException, LineUnavailableException {
+        this.port = port;
+        Host = new ServerSocket(port);
+        System.out.println("Server Created and waiting "
+                + "for connection on port " + port);
+        mic = new Microphone();
+        speak = new Speaker(buffer);
     }
-    
+
+    @Override
+    public void run() {
+        boolean running = true;
+        try {
+            Server = Host.accept();
+            in = Server.getInputStream();
+            DataInputStream din = new DataInputStream(in);
+            
+            
+
+            System.out.println(Server.getRemoteSocketAddress()
+                    + " has just connected");
+            int len = din.readInt();
+            buffer = new byte[len];
+            din.readFully(buffer);
+
+            mic.start();
+            speak.start();
+            if (Server.isConnected()) {
+                send(Server);
+            } else if (client.isConnected()) {
+                send(client);
+            }
+
+        } catch (SocketTimeoutException s) {
+            s.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (NullPointerException p) {
+            p.printStackTrace();
+        }
+    }
+
+    public void connect(InetAddress ip) throws IOException {
+        client = new Socket(ip, port);
+    }
+
+    public void send(Socket output) throws IOException {
+        out = (ObjectOutputStream) output.getOutputStream();
+        out.writeObject(mic.smallBuffer);
+    }
+
 }

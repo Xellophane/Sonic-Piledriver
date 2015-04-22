@@ -5,11 +5,11 @@
  */
 package SonicPiledriver;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.io.*;
 import java.net.*;
 import javax.swing.*;
+import javax.sound.sampled.LineUnavailableException;
 
 /**
  *
@@ -25,9 +25,7 @@ import javax.swing.*;
 public class VoIPGUI extends JFrame{
     String hostName;
     int port;
-    Socket client;
-    Server host;
-    Sound manager;
+    Network network;
     
     
     
@@ -39,10 +37,17 @@ public class VoIPGUI extends JFrame{
         // boolean verify = login.getVerify();
         
         
-        Server host = new Server(6969);
-        host.start();
         
-        manager = new Sound();
+        port = 6969;
+        try {
+            network = new Network(port);
+        } catch (IOException e) {
+            System.out.println("IOException " + e);
+            e.printStackTrace();
+        } catch (LineUnavailableException l) {
+            System.out.println("Line Unavailable Exception " + l);
+        }
+        
         
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -62,13 +67,21 @@ public class VoIPGUI extends JFrame{
         JPanel south = new JPanel(new FlowLayout());
         
         JButton callbt = new JButton("Call");
-        /*ActionListener callListener = new ActionListener(){
-                                public void actionPerformed(ActionEvent e){
-                                    Outgoing = Network.connect((InetAddress) field.getText(), port);
-                                    Sound.CaptureAudio
-                                }
+        ActionListener callListener = new ActionListener(){
+                                 public void actionPerformed(ActionEvent e){
+                                    try {
+                                        network.connect(InetAddress.getByName(field.getText()));
+                                    } catch (UnknownHostException f) {
+                                        System.out.println("Uknown Host Error " + f);
+                                    } catch (IOException g) {
+                                        System.out.println("IOException " + g);
+                                    } catch (NullPointerException n) {
+                                        System.out.println("NullPointerException " + n);
+                                        n.printStackTrace();
+                                    }
+                                } 
         };
-        callbt.addActionListener(callListener);*/
+        callbt.addActionListener(callListener);
         
         JButton addfriend = new JButton("Add Friend");
         /*ActionListener addfriendListener = new ActionListener(){
@@ -95,6 +108,7 @@ public class VoIPGUI extends JFrame{
         frame.add(west, BorderLayout.NORTH);
         
         frame.setVisible(true);
+        network.start();
         
         /*if(login.getVerify() == true){
             frame.setVisible(true);
@@ -103,6 +117,7 @@ public class VoIPGUI extends JFrame{
             System.out.println("Failed to verify login");
         } */
     }
+    
     
     
 }
