@@ -24,6 +24,7 @@ public class DataBase {
     //Fields
     protected Connection connect;
     protected ArrayList<String> tables;
+    
 
     //Constructor
     public DataBase() throws Exception {
@@ -36,6 +37,18 @@ public class DataBase {
 
     } //End Constructor
 
+    //creates tables
+    public void createTable() throws SQLException {
+        Statement stmt = connect.createStatement();
+        
+        stmt.executeUpdate("CREATE DB 'Credentials' IF NOT EXISTS;");
+        stmt.executeUpdate("CREATE TABLE 'login' IF NOT EXISTS;");
+        stmt.executeUpdate("CREATE TABLE 'friends' IF NOT EXISTS;");
+        
+    } // end createTable
+    
+    
+    
     //cretes a new user account
     public void createUser(String username, String password, String IP) {
         try {
@@ -68,14 +81,28 @@ public class DataBase {
     } //ends addFriend
     
     //Updates entries in the database
-    public void updateUser (String username, String password, String IP) {
+    /*public void updateUser (String username, String password, String IP) {
         try {
             Statement stmt = connect.createStatement();
             
             stmt.executeUpdate("UPDATE 'login' WHERE username='" +)
         }
-    }
+    }//end updateUser */
     
+    
+    //sets the user's IP address to something else.
+    public void setIP (String username, String IP){
+        try{
+            Statement stmt = connect.createStatement();
+            
+            stmt.executeUpdate("UPDATE 'IP' WHERE username='" + username + "';");
+            if (stmt != null){
+                stmt.close();
+            }
+        } catch (SQLException except){
+            except.printStackTrace();
+        }
+    } // ends setIP
     
     //deletes a user from the database
     public void delUser (String username){

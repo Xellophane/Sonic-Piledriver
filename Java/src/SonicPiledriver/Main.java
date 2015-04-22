@@ -13,6 +13,7 @@ package SonicPiledriver;
 public class Main {
     public static void main(String[] cl_args) {
         
+        
         /* try {
             Thread server = new GreetingServer();
             server.start();
@@ -20,8 +21,8 @@ public class Main {
             System.out.println("IOException :" + e);
         } */
         
-        // LoginGUI client = new LoginGUI();
-        VoIPGUI gui = new VoIPGUI();
+         LoginGUI client = new LoginGUI();
+        //VoIPGUI gui = new VoIPGUI();
         // client.connect();
         // client.send();
     }
