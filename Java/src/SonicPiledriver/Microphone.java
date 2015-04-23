@@ -34,12 +34,15 @@ public class Microphone extends Thread {
 
     @Override
     public void run() {
-        running = true;
-        while (running) {
-            captureAudio();
+        synchronized (this) {
+        
+        captureAudio();
+        try {
+            this.wait();
+        } catch (InterruptedException e) {
 
         }
-
+    }
     }
 
     public void captureAudio() {

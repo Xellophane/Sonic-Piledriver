@@ -7,6 +7,7 @@ package SonicPiledriver;
 
 import java.io.*;
 import javax.sound.sampled.*;
+import java.nio.*;
 
 /**
  *
@@ -15,7 +16,7 @@ import javax.sound.sampled.*;
 public class Speaker extends Thread {
 
     boolean running;
-    InputStream in;
+    ByteArrayInputStream in;
     int bufferSize;
     byte buffer[];
     DataLine.Info info;
@@ -27,8 +28,8 @@ public class Speaker extends Thread {
         AudioFormat format = getFormat();
         bufferSize = (int) format.getSampleRate()
                 * format.getFrameSize();
-        buffer = new byte[bufferSize];
-        this.in = in;
+        buffer = b;
+        in = new ByteArrayInputStream(buffer);
         ais = new AudioInputStream(in, format,
                 buffer.length / format.getFrameSize());
         info = new DataLine.Info(SourceDataLine.class, format);
@@ -40,12 +41,16 @@ public class Speaker extends Thread {
 
     @Override
     public void run() {
-        running = true;
-        while(running) {
+        synchronized (this) {
             playAudio();
+            line.drain();
+            try {
+                this.wait();
+            } catch (InterruptedException e) {
+
+            }
         }
-        line.drain();
-        line.close();
+
     }
 
     public void playAudio() {
@@ -70,6 +75,5 @@ public class Speaker extends Thread {
         return new AudioFormat(sampleRate,
                 sampleSizeInBits, channels, signed, bigEndian);
     }
-    
-    
+
 }

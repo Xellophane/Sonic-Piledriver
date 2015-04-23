@@ -17,29 +17,110 @@ import java.util.HashMap;
 /**
  *
  * @author Jeff
- * 
+ *
  */
 public class DataBase {
 
     //Fields
     protected Connection connect;
     protected ArrayList<String> tables;
+    protected String url;
 
     //Constructor
     public DataBase() throws Exception {
-        String dbPath = "./Credentials.db";
+        String dbPath = "../Credentials.db";
 
         Class.forName("org.sqlite.JDBC");
-        String url = "jdbc:sqlite:" + dbPath;
+        url = "jdbc:sqlite:" + dbPath;
 
         connect = DriverManager.getConnection(url);
+        
 
     } //End Constructor
+
+    //cretes a new user account
+    public void createUser(String username, String password, String IP) {
+        try {
+            connect = DriverManager.getConnection(url);
+            connect.setAutoCommit(false);
+            System.out.println("opened database");
+            
+            Statement stmt = connect.createStatement();
+            
+            String sql = "INSERT INTO login ( username, password, IP ) VALUES ('" + username + "', '" + password + "', '" + IP + "');";
+            
+            System.out.println(sql);
+
+            stmt.executeUpdate(sql);
+
+            if (stmt != null) {
+                stmt.close();
+            }
+            
+            connect.commit();
+            connect.close();
+            
+        } catch (SQLException except) {
+            except.printStackTrace();
+
+        }
+    } //ends createUser
+    
+    //creates entries in the friends list
+    public void addFriend (String username, String friend){
+         try {
+            Statement stmt = connect.createStatement();
+            
+            stmt.executeUpdate("INSERT INTO 'friends' VALUES('" + username + "', '" + friend +"');");
+            
+            if (stmt != null) {
+                stmt.close();
+            }
+        } catch (SQLException except){
+            except.printStackTrace();
+        }
+    } //ends addFriend
+    
+    //Updates entries in the database
+    /*public void updateUser (String username, String password, String IP) {
+        try {
+            Statement stmt = connect.createStatement();
+            
+            stmt.executeUpdate("UPDATE 'login' WHERE username='" +)
+        }
+    }//end updateUser */
     
     
+    //sets the user's IP address to something else.
+    public void setIP (String username, String IP){
+        try{
+            Statement stmt = connect.createStatement();
+            
+            stmt.executeUpdate("UPDATE 'IP' WHERE username='" + username + "';");
+            if (stmt != null){
+                stmt.close();
+            }
+        } catch (SQLException except){
+            except.printStackTrace();
+        }
+    } // ends setIP
+    
+    //deletes a user from the database
+    public void delUser (String username){
+        try {
+            Statement stmt = connect.createStatement();
+
+            stmt.executeUpdate("DELETE * WHERE username='" + username + "';");
+             if (stmt != null){
+                 stmt.close();
+             }
+        } catch (SQLException except){
+            except.printStackTrace();
+        }
+    } //ends delUser
 
     //Gets the current user's registered friends
-    public HashMap<String, String> getFriends(String username) throws SQLException { 
+    public HashMap<String, String> getFriends(String username) throws SQLException {
 
         HashMap<String, String> buddies = new HashMap<>();
 
@@ -48,25 +129,29 @@ public class DataBase {
         ResultSet resSet = stmt.executeQuery("SELECT * FROM 'friends' WHERE username='" + username + "';");
 
         while (resSet.next()) {
-            buddies.put(resSet.getString(0), resSet.getString(2));
+            buddies.put(resSet.getString(2), getIP(resSet.getString(2)));
         }
 
         stmt.close();
 
         return buddies;
     } //Ends getFriends
+
     
-    //
-    public String getIP (String username) throws SQLException{
-        
+    
+    // gets a user's IP address from the database
+    public String getIP(String username) throws SQLException {
+
         String IP = "";
         Statement stmt = connect.createStatement();
-        
-         ResultSet resSet = stmt.executeQuery("SELECT 'IP' FROM 'login' WHERE username='" + username + "';");
-        
-         return IP;
-    }
-    
+
+        ResultSet resSet = stmt.executeQuery("SELECT 'IP' FROM 'login' WHERE username='" + username + "';");
+
+        IP = resSet.getString(0);
+
+        return IP;
+    } //en getIP
+
     //Checks Login Credentials
     public boolean isValid(String username, String password) {
         try {
@@ -75,12 +160,12 @@ public class DataBase {
             boolean hasRecord;
 
             ResultSet resSet = stmt.executeQuery("SELECT * FROM 'login' WHERE username='" + username + "' AND password='" + password + "';");
-            hasRecord = resSet.next();
+            //hasRecord = resSet.next();
 
             if (stmt != null) {
                 stmt.close();
             }
-
+            hasRecord = true;
             return hasRecord;
         } catch (SQLException e) {
             return false;

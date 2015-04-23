@@ -5,23 +5,22 @@
  */
 package SonicPiledriver;
 
-
 /**
  *
  * @author Xellophane
  */
 public class Main {
+
     public static void main(String[] cl_args) {
-        
+
         /* try {
-            Thread server = new GreetingServer();
-            server.start();
-        } catch (IOException e) {
-            System.out.println("IOException :" + e);
-        } */
-        
-        // LoginGUI client = new LoginGUI();
-        VoIPGUI gui = new VoIPGUI();
+         Thread server = new GreetingServer();
+         server.start();
+         } catch (IOException e) {
+         System.out.println("IOException :" + e);
+         } */
+        LoginGUI client = new LoginGUI();
+        //VoIPGUI gui = new VoIPGUI();
         // client.connect();
         // client.send();
     }

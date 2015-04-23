@@ -7,13 +7,15 @@ package SonicPiledriver;
 
 import java.net.*;
 import java.io.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.sound.sampled.LineUnavailableException;
 
 /**
  *
  * @author Xellophane
  */
-public class Network extends Thread {
+public class Network {
 
     ServerSocket Host;
     int port;
@@ -26,24 +28,21 @@ public class Network extends Thread {
     ObjectOutputStream out;
     byte buffer[];
 
-    public Network(int port) throws IOException, LineUnavailableException {
+    public Network(int port) throws IOException {
         this.port = port;
         Host = new ServerSocket(port);
         System.out.println("Server Created and waiting "
                 + "for connection on port " + port);
-        mic = new Microphone();
-        speak = new Speaker(buffer);
+        running = true;
     }
 
-    @Override
     public void run() {
-        boolean running = true;
+
         try {
+
             Server = Host.accept();
             in = Server.getInputStream();
             DataInputStream din = new DataInputStream(in);
-            
-            
 
             System.out.println(Server.getRemoteSocketAddress()
                     + " has just connected");
@@ -51,25 +50,36 @@ public class Network extends Thread {
             buffer = new byte[len];
             din.readFully(buffer);
 
+            mic = new Microphone();
+            speak = new Speaker(buffer);
             mic.start();
             speak.start();
-            if (Server.isConnected()) {
-                send(Server);
-            } else if (client.isConnected()) {
-                send(client);
+
+            while (running) {
+                mic.notify();
+                speak.notify();
+                if (Server.isConnected()) {
+                    send(Server);
+                } else if (client.isConnected()) {
+                    send(client);
+                } else if (!Server.isConnected() && !client.isConnected()) {
+                    
+                }
             }
 
-        } catch (SocketTimeoutException s) {
-            s.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (NullPointerException p) {
-            p.printStackTrace();
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 
     public void connect(InetAddress ip) throws IOException {
         client = new Socket(ip, port);
+    }
+    
+    public void Host(int port) throws IOException {
+        InetSocketAddress name = new InetSocketAddress(port);
+        Host.bind(name);
+        
     }
 
     public void send(Socket output) throws IOException {
