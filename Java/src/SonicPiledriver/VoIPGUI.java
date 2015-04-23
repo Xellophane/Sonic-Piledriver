@@ -30,6 +30,16 @@ public class VoIPGUI extends JFrame {
     int port;
     Network network;
     String username;
+    
+    JFrame frame;
+    JTextField field;
+    JComboBox friendlist;
+    JPanel center;
+    JPanel south;
+    JPanel west;
+    JButton callbt;
+    JButton addfriend;
+    JButton endbt;
 
     public VoIPGUI(String username) {
         //sets up VoIP menu GUI
@@ -41,17 +51,19 @@ public class VoIPGUI extends JFrame {
         } catch (IOException e) {
             System.out.println("IOException " + e);
             e.printStackTrace();
+        } catch (LineUnavailableException e) {
+            e.printStackTrace();
         }
 
-        JFrame frame = new JFrame();
+        frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(new Dimension(300, 200));
         frame.setTitle("Java VoIP");
         frame.setLayout(new BorderLayout());
-        JTextField field = new JTextField();
+        field = new JTextField();
 
         //Creates the combobox with its action listeners
-        JComboBox friendlist = new JComboBox();
+        friendlist = new JComboBox();
         /*DataBase db = new DataBase();
          HashMap<String, String> buddies = db.getFriends();
          for (String s : buddies.keySet()) {
@@ -64,15 +76,15 @@ public class VoIPGUI extends JFrame {
          };  */
 
         // sets up the lable, textfield, and friend list
-        JPanel center = new JPanel(new GridLayout(2, 1));
+        center = new JPanel(new GridLayout(2, 1));
         center.add(field);
         center.add(friendlist);
         frame.add(center, BorderLayout.CENTER);
 
         // Add two new buttons, Call, and End
-        JPanel south = new JPanel(new FlowLayout());
+        south = new JPanel(new FlowLayout());
 
-        JButton callbt = new JButton("Call");
+        callbt = new JButton("Call");
         ActionListener callListener = new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
@@ -89,17 +101,17 @@ public class VoIPGUI extends JFrame {
         };
         callbt.addActionListener(callListener);
 
-        JButton addfriend = new JButton("Add Friend");
+        addfriend = new JButton("Add Friend");
         /* ActionListener addfriendListener = new ActionListener() {
          public void actionPerformed(ActionEvent e) {
          new AddFriendGUI();
          }
          }; */
 
-        JButton endbt = new JButton("End");
+        endbt = new JButton("End");
         ActionListener endListener = new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                //method that ends the call
+                
             }
         };
 
@@ -108,12 +120,16 @@ public class VoIPGUI extends JFrame {
         south.add(addfriend);
         frame.add(south, BorderLayout.SOUTH);
 
-        JPanel west = new JPanel(new FlowLayout());
+        west = new JPanel(new FlowLayout());
         west.add(new JLabel("Enter the IP you want to call:"));
         frame.add(west, BorderLayout.NORTH);
 
         frame.setVisible(true);
 
+    }
+    
+    public void run() {
+        
     }
 
 }

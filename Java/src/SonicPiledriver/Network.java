@@ -10,6 +10,8 @@ import java.io.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.sound.sampled.LineUnavailableException;
+import java.nio.channels.*;
+import java.nio.*;
 
 /**
  *
@@ -17,74 +19,52 @@ import javax.sound.sampled.LineUnavailableException;
  */
 public class Network {
 
-    ServerSocket Host;
+    SocketChannel socketChannel;
+    ServerSocketChannel Host;
     int port;
-    boolean running;
     Socket Server;
     Socket client;
     Microphone mic;
     Speaker speak;
-    InputStream in;
-    ObjectOutputStream out;
-    byte buffer[];
+    ByteBuffer input;
+    ByteBuffer output;
 
-    public Network(int port) throws IOException {
+    public Network(int port) throws IOException, LineUnavailableException {
         this.port = port;
-        Host = new ServerSocket(port);
+        Host = ServerSocketChannel.open();
+        Host.bind(new InetSocketAddress (port));
+        Host.configureBlocking(false);
+        
         System.out.println("Server Created and waiting "
                 + "for connection on port " + port);
-        running = true;
+        mic = new Microphone();
+        output = ByteBuffer.allocate(mic.bufferout.capacity());
+        input = ByteBuffer.allocate(output.capacity());
+        speak = new Speaker(input);
     }
 
-    public void run() {
-
-        try {
-
-            Server = Host.accept();
-            in = Server.getInputStream();
-            DataInputStream din = new DataInputStream(in);
-
-            System.out.println(Server.getRemoteSocketAddress()
-                    + " has just connected");
-            int len = din.readInt();
-            buffer = new byte[len];
-            din.readFully(buffer);
-
-            mic = new Microphone();
-            speak = new Speaker(buffer);
-            mic.start();
-            speak.start();
-
-            while (running) {
-                mic.notify();
-                speak.notify();
-                if (Server.isConnected()) {
-                    send(Server);
-                } else if (client.isConnected()) {
-                    send(client);
-                } else if (!Server.isConnected() && !client.isConnected()) {
-                    
-                }
-            }
-
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
+    
 
     public void connect(InetAddress ip) throws IOException {
-        client = new Socket(ip, port);
+        socketChannel.connect(new InetSocketAddress(ip, port));
+        socketChannel.configureBlocking(false);
     }
     
     public void Host(int port) throws IOException {
-        InetSocketAddress name = new InetSocketAddress(port);
-        Host.bind(name);
-        
+        if(socketChannel == null) {
+            socketChannel = Host.accept();
+            socketChannel.configureBlocking(false);
+        }
     }
 
-    public void send(Socket output) throws IOException {
-        out = (ObjectOutputStream) output.getOutputStream();
-        out.writeObject(mic.smallBuffer);
+    public void send() throws IOException {
+        if (socketChannel != null) {
+            socketChannel.write(output);
+        }
+    }
+    
+    public void close() throws IOException {
+        socketChannel.close();
     }
 
 }
